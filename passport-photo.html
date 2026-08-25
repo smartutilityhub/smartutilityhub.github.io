@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Passport Photo Maker Online - Free Passport Size Photo Creator | Smart Utility Hub</title>
+
+  <meta name="description" content="Create passport size photos online for free. Upload, crop, resize and download your passport photo quickly and easily with Smart Utility Hub.">
+
+  <meta name="keywords" content="passport photo maker, passport size photo, passport photo online, passport photo creator, free passport photo maker, passport size photo maker">
+
+  <meta name="robots" content="index, follow">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f7fb;
+      color: #172033;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1d4ed8, #7c3aed);
+      color: white;
+      padding: 18px 20px;
+    }
+
+    .nav {
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+      text-decoration: none;
+      color: white;
+    }
+
+    .home-btn {
+      color: white;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,.6);
+      padding: 9px 15px;
+      border-radius: 8px;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .hero h1 {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      color: #687087;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+
+    .upload-box {
+      border: 2px dashed #2563eb;
+      padding: 35px 20px;
+      text-align: center;
+      border-radius: 12px;
+      cursor: pointer;
+      background: #f8fbff;
+    }
+
+    .upload-box:hover {
+      background: #eff6ff;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .preview-area {
+      margin-top: 25px;
+      text-align: center;
+      display: none;
+    }
+
+    #preview {
+      max-width: 100%;
+      max-height: 400px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    .controls {
+      margin-top: 25px;
+      display: none;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      border: none;
+      background: #2563eb;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .download-btn {
+      background: #16a34a;
+    }
+
+    .download-btn:hover {
+      background: #15803d;
+    }
+
+    .info {
+      margin-top: 35px;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      line-height: 1.7;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #687087;
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 28px;
+      }
+
+      .nav {
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <a href="index.html" class="logo">Smart Utility Hub</a>
+    <a href="index.html" class="home-btn">← Home</a>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <h1>Free Passport Photo Maker Online</h1>
+    <p>
+      Create and download your passport size photo online for free.
+      Upload your image, preview it and save your passport photo easily.
+    </p>
+  </section>
+
+  <section class="card">
+
+    <label class="upload-box" for="imageInput">
+      <h2>📷 Upload Your Photo</h2>
+      <p>Click here to select an image</p>
+    </label>
+
+    <input type="file" id="imageInput" accept="image/*">
+
+    <div class="preview-area" id="previewArea">
+      <h3>Your Photo Preview</h3>
+      <canvas id="canvas" style="display:none;"></canvas>
+      <img id="preview" alt="Passport photo preview">
+    </div>
+
+    <div class="controls" id="controls">
+      <button onclick="createPassportPhoto()">Create Passport Photo</button>
+      <button class="download-btn" onclick="downloadPhoto()">Download Photo</button>
+    </div>
+
+  </section>
+
+  <section class="info">
+    <h2>How to Create a Passport Size Photo?</h2>
+    <ol>
+      <li>Click <strong>Upload Your Photo</strong>.</li>
+      <li>Select a clear photo from your device.</li>
+      <li>Click <strong>Create Passport Photo</strong>.</li>
+      <li>Download your resized passport photo.</li>
+    </ol>
+
+    <h2>Free Online Passport Photo Tool</h2>
+    <p>
+      Smart Utility Hub provides a simple and free passport photo maker.
+      You can quickly convert your photo into a passport-size image directly
+      from your browser.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  © 2026 Smart Utility Hub
+</footer>
+
+<script>
+  const imageInput = document.getElementById("imageInput");
+  const preview = document.getElementById("preview");
+  const previewArea = document.getElementById("previewArea");
+  const controls = document.getElementById("controls");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  let uploadedImage = new Image();
+
+  imageInput.addEventListener("change", function () {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+
+      uploadedImage.onload = function () {
+        preview.src = e.target.result;
+        previewArea.style.display = "block";
+        controls.style.display = "flex";
+      };
+
+      uploadedImage.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+  });
+
+  function createPassportPhoto() {
+
+    if (!uploadedImage.src) {
+      alert("Please upload a photo first.");
+      return;
+    }
+
+    // Standard 35mm x 45mm ratio
+    canvas.width = 413;
+    canvas.height = 531;
+
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const imageRatio = uploadedImage.width / uploadedImage.height;
+    const targetRatio = canvas.width / canvas.height;
+
+    let drawWidth, drawHeight, x, y;
+
+    if (imageRatio > targetRatio) {
+      drawHeight = canvas.height;
+      drawWidth = uploadedImage.width * (drawHeight / uploadedImage.height);
+      x = (canvas.width - drawWidth) / 2;
+      y = 0;
+    } else {
+      drawWidth = canvas.width;
+      drawHeight = uploadedImage.height * (drawWidth / uploadedImage.width);
+      x = 0;
+      y = (canvas.height - drawHeight) / 2;
+    }
+
+    ctx.drawImage(uploadedImage, x, y, drawWidth, drawHeight);
+
+    preview.src = canvas.toDataURL("image/jpeg", 0.95);
+
+    alert("Passport photo created successfully!");
+  }
+
+  function downloadPhoto() {
+
+    if (!preview.src) {
+      alert("Please create the passport photo first.");
+      return;
+    }
+
+    const link = document.createElement("a");
+    link.download = "passport-photo.jpg";
+    link.href = preview.src;
+    link.click();
+  }
+</script>
+
+</body>
+</html>
