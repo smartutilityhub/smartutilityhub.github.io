@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>QR Code Generator Online - Free QR Code Maker | Smart Utility Hub</title>
+<meta name="description" content="Generate QR codes online for free. Create a QR code for any website link, text, phone number or other information and download it instantly.">
+<meta name="keywords" content="QR code generator, free QR code maker, create QR code online, URL QR code generator">
+<meta name="robots" content="index, follow">
+
+<style>
+:root{
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#687087;
+  --primary:#2563eb;
+  --primary2:#7c3aed;
+  --border:#dce1eb;
+  --success:#059669;
+  --shadow:0 10px 30px rgba(20,30,55,.08);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+header{
+  background:linear-gradient(135deg,#1d4ed8,#7c3aed);
+  color:#fff;
+  padding:18px 20px;
+}
+.nav{
+  max-width:1100px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.logo{
+  font-size:22px;
+  font-weight:700;
+}
+.home-btn{
+  color:#fff;
+  text-decoration:none;
+  border:1px solid rgba(255,255,255,.6);
+  padding:9px 16px;
+  border-radius:10px;
+}
+.container{
+  max-width:850px;
+  margin:auto;
+  padding:55px 20px;
+}
+.hero{
+  text-align:center;
+  margin-bottom:30px;
+}
+.hero h1{
+  font-size:42px;
+  margin:0 0 12px;
+}
+.hero p{
+  color:var(--muted);
+  font-size:18px;
+  line-height:1.6;
+}
+.card{
+  background:var(--card);
+  border-radius:20px;
+  padding:30px;
+  box-shadow:var(--shadow);
+}
+label{
+  display:block;
+  font-weight:700;
+  margin-bottom:10px;
+}
+textarea{
+  width:100%;
+  min-height:120px;
+  padding:15px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  font-size:16px;
+  resize:vertical;
+}
+textarea:focus{
+  outline:none;
+  border-color:var(--primary);
+}
+button{
+  margin-top:18px;
+  width:100%;
+  border:none;
+  border-radius:10px;
+  padding:14px;
+  background:linear-gradient(135deg,#2563eb,#7c3aed);
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
+.result{
+  display:none;
+  text-align:center;
+  margin-top:30px;
+}
+.qr-box{
+  display:inline-block;
+  background:#fff;
+  padding:20px;
+  border:1px solid var(--border);
+  border-radius:16px;
+}
+.qr-box img{
+  width:250px;
+  height:250px;
+  max-width:100%;
+  display:block;
+}
+.download-btn{
+  display:inline-block;
+  margin-top:18px;
+  background:var(--success);
+  color:#fff;
+  text-decoration:none;
+  padding:13px 22px;
+  border-radius:10px;
+  font-weight:700;
+}
+.info{
+  margin-top:30px;
+  background:#fff;
+  border-radius:20px;
+  padding:30px;
+  box-shadow:var(--shadow);
+  line-height:1.7;
+}
+footer{
+  text-align:center;
+  padding:25px;
+  color:var(--muted);
+}
+@media(max-width:600px){
+  .hero h1{font-size:32px}
+  .card{padding:20px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">Smart Utility Hub</div>
+    <a class="home-btn" href="./index.html">← Home</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <section class="hero">
+    <h1>Free QR Code Generator</h1>
+    <p>Create a QR code instantly for a website link, text, phone number or any other information.</p>
+  </section>
+
+  <section class="card">
+    <label for="qrText">Enter Text or Website URL</label>
+
+    <textarea id="qrText" placeholder="Example: https://example.com"></textarea>
+
+    <button onclick="generateQR()">Generate QR Code</button>
+
+    <div class="result" id="result">
+      <div class="qr-box">
+        <img id="qrImage" alt="Generated QR Code">
+      </div>
+
+      <br>
+
+      <a id="downloadBtn" class="download-btn" download="qr-code.png">
+        ⬇ Download QR Code
+      </a>
+    </div>
+  </section>
+
+  <section class="info">
+    <h2>How to Generate a QR Code?</h2>
+    <ol>
+      <li>Enter a website URL, text, phone number or other information.</li>
+      <li>Click <strong>Generate QR Code</strong>.</li>
+      <li>Your QR code will appear instantly.</li>
+      <li>Click <strong>Download QR Code</strong> to save it.</li>
+    </ol>
+
+    <h2>Free Online QR Code Maker</h2>
+    <p>
+      Smart Utility Hub lets you create QR codes quickly and easily without
+      installing any software.
+    </p>
+  </section>
+
+</div>
+
+<footer>
+  © 2026 Smart Utility Hub - Free Online Tools
+</footer>
+
+<script>
+function generateQR(){
+  const text = document.getElementById("qrText").value.trim();
+
+  if(!text){
+    alert("Please enter text or a website URL.");
+    return;
+  }
+
+  const qrImage = document.getElementById("qrImage");
+  const result = document.getElementById("result");
+  const downloadBtn = document.getElementById("downloadBtn");
+
+  const qrURL =
+    "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=" +
+    encodeURIComponent(text);
+
+  qrImage.src = qrURL;
+  downloadBtn.href = qrURL;
+  result.style.display = "block";
+}
+</script>
+
+</body>
+</html>
