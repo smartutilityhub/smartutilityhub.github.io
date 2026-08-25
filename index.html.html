@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Utility Hub</title>
+<style>
+:root{
+  --bg:#f5f7fb; --card:#ffffff; --text:#172033; --muted:#687087;
+  --primary:#2563eb; --primary2:#1d4ed8; --border:#dce1eb;
+  --success:#059669; --shadow:0 10px 30px rgba(20,30,55,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);transition:.2s}
+body.dark-mode{
+  --bg:#111827; --card:#1f2937; --text:#f9fafb; --muted:#c1c7d0;
+  --border:#374151; --primary:#3b82f6; --primary2:#2563eb;
+}
+header{background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;padding:18px 20px;position:sticky;top:0;z-index:10}
+.nav{max-width:1150px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.logo{font-size:22px;font-weight:700}
+.theme-btn{border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.16);color:#fff;border-radius:10px;padding:9px 12px;cursor:pointer;font-size:16px}
+.hero{max-width:1150px;margin:0 auto;padding:55px 20px 30px;text-align:center}
+.hero h1{font-size:clamp(30px,5vw,48px);margin:0 0 10px}
+.hero p{color:var(--muted);font-size:17px;margin:0}
+.container{max-width:1150px;margin:auto;padding:15px 20px 60px}
+.search-wrap{max-width:650px;margin:0 auto 28px;position:relative}
+.search-box{width:100%;padding:15px 18px 15px 46px;border:2px solid var(--border);border-radius:14px;background:var(--card);color:var(--text);font-size:16px;box-shadow:var(--shadow);outline:none}
+.search-box:focus{border-color:var(--primary)}
+.search-icon{position:absolute;left:17px;top:50%;transform:translateY(-50%);font-size:19px}
+.no-results{display:none;text-align:center;color:var(--muted);padding:25px;font-weight:700}
+.section-title{text-align:center;margin:25px 0 18px;font-size:26px}
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.tool-card,.panel{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
+.tool-card{padding:25px;text-align:center}
+.tool-card .icon{font-size:42px}
+.tool-card h3{margin:12px 0 8px}
+.tool-card p{color:var(--muted);min-height:42px}
+button{font:inherit}
+.open-btn,.action-btn,.download-btn{
+  border:0;background:var(--primary);color:#fff;padding:11px 16px;border-radius:10px;cursor:pointer;font-weight:700
+}
+.open-btn:hover,.action-btn:hover,.download-btn:hover{background:var(--primary2)}
+.panel{display:none;margin-top:30px;padding:25px}
+.panel.active{display:block}
+.panel h2{margin-top:0}
+.back-row{display:flex;justify-content:flex-end}
+.close-btn{background:transparent;border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:9px;cursor:pointer}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:15px 0}
+label{font-weight:700;font-size:14px;display:block;margin-bottom:7px}
+input,select{width:100%;padding:11px;border:1px solid var(--border);border-radius:9px;background:var(--card);color:var(--text)}
+.preview-wrap{margin-top:18px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+canvas,.preview-image{max-width:100%;border:1px solid var(--border);border-radius:10px;background:#fff}
+.status{margin-top:12px;color:var(--muted);font-size:14px}
+.result{margin-top:15px;padding:14px;border-radius:10px;background:rgba(37,99,235,.1);font-weight:700}
+.hidden{display:none!important}
+footer{padding:28px 20px;text-align:center;background:#111827;color:#fff}
+@media(max-width:600px){.hero{padding-top:35px}.panel{padding:18px}.nav{align-items:center}.logo{font-size:19px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="logo">🛠️ Smart Utility Hub</div>
+    <button id="themeButton" class="theme-btn" type="button" aria-label="Toggle dark mode">🌙</button>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Useful Tools in One Place</h1>
+  <p>Passport photo, image compression, resizing and quick calculations.</p>
+</section>
+
+<main class="container">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input id="toolSearch" class="search-box" type="search" placeholder="Search tools... e.g. passport, resize, percentage" aria-label="Search tools">
+  </div>
+  <div id="noResults" class="no-results">No matching tool found.</div>
+  
+
+  <h2 class="section-title searchable-heading">Image Tools</h2>
+  <div class="tool-grid searchable-grid">
+    <div class="tool-card" data-search="passport photo maker passport size photo 35 45 mm">
+      <div class="icon">📸</div><h3>Passport Photo Maker</h3>
+      <p>Create a standard 35 × 45 mm passport-style image.</p>
+      <button class="open-btn" type="button" onclick="showTool('passport')">Open Tool</button>
+    </div>
+    <div class="tool-card" data-search="image compressor compress jpg png reduce size kb mb">
+      <div class="icon">🗜️</div><h3>Image Compressor</h3>
+      <p>Reduce JPG/PNG image file size using your browser.</p>
+      <button class="open-btn" type="button" onclick="showTool('compressor')">Open Tool</button>
+    </div>
+    <div class="tool-card" data-search="image resizer resize width height pixels px">
+      <div class="icon">📐</div><h3>Image Resizer</h3>
+      <p>Resize an image to your required width and height.</p>
+      <button class="open-btn" type="button" onclick="showTool('resizer')">Open Tool</button>
+    </div>
+  </div>
+
+  <h2 class="section-title searchable-heading">Calculator Tools</h2>
+  <div class="tool-grid searchable-grid">
+    <div class="tool-card" data-search="percentage calculator percent maths math calculation">
+      <div class="icon">🧮</div><h3>Percentage Calculator</h3>
+      <p>Quickly calculate what percentage one number is of another.</p>
+      <button class="open-btn" type="button" onclick="showTool('percentage')">Open Tool</button>
+    </div>
+    <div class="tool-card" data-search="simple calculator basic addition subtraction multiplication division maths math">
+      <div class="icon">➕</div><h3>Simple Calculator</h3>
+      <p>Perform basic addition, subtraction, multiplication and division.</p>
+      <button class="open-btn" type="button" onclick="showTool('simplecalc')">Open Tool</button>
+    </div>
+    <div class="tool-card" data-search="age calculator date birth dob years months days birthday">
+      <div class="icon">🎂</div><h3>Age Calculator</h3>
+      <p>Calculate your exact age from your date of birth.</p>
+      <button class="open-btn" type="button" onclick="showTool('agecalc')">Open Tool</button>
+    </div>
+    <div class="tool-card" data-search="emi calculator loan interest rate tenure monthly payment">
+      <div class="icon">💰</div><h3>EMI Calculator</h3>
+      <p>Calculate estimated monthly EMI for a loan.</p>
+      <button class="open-btn" type="button" onclick="showTool('emicalc')">Open Tool</button>
+    </div>
+    <div class="tool-card" data-search="bmi calculator body mass index weight height health">
+      <div class="icon">⚖️</div><h3>BMI Calculator</h3>
+      <p>Calculate Body Mass Index using your weight and height.</p>
+      <button class="open-btn" type="button" onclick="showTool('bmicalc')">Open Tool</button>
+    </div>
+    <div class="tool-card" data-search="gst calculator tax goods services tax amount inclusive exclusive">
+      <div class="icon">🧾</div><h3>GST Calculator</h3>
+      <p>Calculate GST amount and total price quickly.</p>
+      <button class="open-btn" type="button" onclick="showTool('gstcalc')">Open Tool</button>
+    </div>
+  </div>
+
+  <h2 class="section-title searchable-heading">Converter Tools</h2>
+  <div class="tool-grid searchable-grid">
+    <div class="tool-card" data-search="unit converter convert length weight temperature km meter cm feet inch kg gram celsius fahrenheit">
+      <div class="icon">🔄</div><h3>Unit Converter</h3>
+      <p>Convert length, weight and temperature units quickly.</p>
+      <button class="open-btn" type="button" onclick="showTool('unitcalc')">Open Tool</button>
+    </div>
+    <div class="tool-card" data-search="days calculator date difference days between dates duration">
+      <div class="icon">📅</div><h3>Days Between Dates</h3>
+      <p>Find the number of days between any two dates.</p>
+      <button class="open-btn" type="button" onclick="showTool('dayscalc')">Open Tool</button>
+    </div>
+    <div class="tool-card" data-search="currency converter money exchange rupee usd dollar euro pound yen inr live exchange rate">
+      <div class="icon">💱</div><h3>Currency Converter</h3>
+      <p>Convert money between popular currencies using latest available rates.</p>
+      <button class="open-btn" type="button" onclick="showTool('currencycalc')">Open Tool</button>
+    </div>
+  </div>
+
+  <h2 class="section-title searchable-heading">PDF Tools</h2>
+  <div class="tool-grid searchable-grid">
+    <div class="tool-card" data-search="image to pdf jpg png photo convert pdf document">
+      <div class="icon">📄</div><h3>Image to PDF</h3>
+      <p>Convert one or more images into a PDF document.</p>
+      <button class="open-btn" type="button" onclick="showTool('imagetopdf')">Open Tool</button>
+    </div>
+    <div class="tool-card" data-search="pdf to image pdf convert page jpg png image document">
+      <div class="icon">🖼️</div><h3>PDF to Image</h3>
+      <p>Convert PDF pages into downloadable PNG images.</p>
+      <button class="open-btn" type="button" onclick="showTool('pdftoimage')">Open Tool</button>
+    </div>
+    <div class="tool-card" data-search="merge pdf combine join multiple pdf files document">
+      <div class="icon">📑</div><h3>Merge PDF</h3>
+      <p>Combine multiple PDF files into one PDF document.</p>
+      <button class="open-btn" type="button" onclick="showTool('mergepdf')">Open Tool</button>
+    </div>
+    <div class="tool-card" data-search="split pdf extract pages separate pdf document page range">
+      <div class="icon">✂️</div><h3>Split PDF</h3>
+      <p>Extract selected pages or page ranges into a new PDF.</p>
+      <button class="open-btn" type="button" onclick="showTool('splitpdf')">Open Tool</button>
+    </div>
+  </div>
+
+    <h2 class="section-title searchable-heading">Daily Tools</h2>
+  <div class="tool-grid searchable-grid">
+    <div class="tool-card" data-search="password generator secure random strong password letters numbers symbols">
+      <div class="icon">🔐</div><h3>Password Generator</h3>
+      <p>Create strong random passwords with custom options.</p>
+      <button class="open-btn" type="button" onclick="showTool('passwordgen')">Open Tool</button>
+  
+    <div class="tool-card" data-search="qr code generator create qr link text website phone">
+      <div class="icon">🔳</div><h3>QR Code Generator</h3>
+      <p>Create a QR code from text, links, phone numbers and more.</p>
+      <button class="open-btn" type="button" onclick="showTool('qrcodegen')">Open Tool</button>
+    </div>
+  </div>
+  </div>
+
+<section id="passport" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>📸 Passport Photo Maker</h2>
+    <div class="form-grid">
+      <div><label for="passportFile">Choose Image</label><input id="passportFile" type="file" accept="image/*"></div>
+      <div><label for="passportFormat">Download Format</label><select id="passportFormat"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option></select></div>
+    </div>
+    <button class="action-btn" type="button" onclick="makePassport()">Create Passport Photo</button>
+    <div class="preview-wrap"><canvas id="passportCanvas" width="413" height="531"></canvas></div>
+    <button id="passportDownload" class="download-btn hidden" type="button" onclick="downloadCanvas('passportCanvas','passport-photo')">Download</button>
+    <div id="passportStatus" class="status"></div>
+  </section>
+
+  <section id="compressor" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>🗜️ Image Compressor</h2>
+    <div class="form-grid">
+      <div><label for="compressFile">Choose Image</label><input id="compressFile" type="file" accept="image/*"></div>
+      <div><label for="quality">Quality: <span id="qualityValue">80</span>%</label><input id="quality" type="range" min="10" max="100" value="80"></div>
+    </div>
+    <button class="action-btn" type="button" onclick="compressImage()">Compress Image</button>
+    <div class="preview-wrap"><img id="compressPreview" class="preview-image hidden" alt="Compressed preview"></div>
+    <button id="compressDownload" class="download-btn hidden" type="button">Download Compressed Image</button>
+    <div id="compressStatus" class="status"></div>
+  </section>
+
+  <section id="resizer" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>📐 Image Resizer</h2>
+    <div class="form-grid">
+      <div><label for="resizeFile">Choose Image</label><input id="resizeFile" type="file" accept="image/*"></div>
+      <div><label for="resizeWidth">Width (px)</label><input id="resizeWidth" type="number" min="1" placeholder="e.g. 600"></div>
+      <div><label for="resizeHeight">Height (px)</label><input id="resizeHeight" type="number" min="1" placeholder="e.g. 800"></div>
+    </div>
+    <button class="action-btn" type="button" onclick="resizeImage()">Resize Image</button>
+    <div class="preview-wrap"><canvas id="resizeCanvas"></canvas></div>
+    <button id="resizeDownload" class="download-btn hidden" type="button" onclick="downloadCanvas('resizeCanvas','resized-image')">Download Resized Image</button>
+    <div id="resizeStatus" class="status"></div>
+  </section>
+
+  <section id="percentage" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>🧮 Percentage Calculator</h2>
+    <div class="form-grid">
+      <div><label for="part">Number</label><input id="part" type="number" placeholder="e.g. 20"></div>
+      <div><label for="whole">Total</label><input id="whole" type="number" placeholder="e.g. 120"></div>
+    </div>
+    <button class="action-btn" type="button" onclick="calculatePercentage()">Calculate</button>
+    <div id="percentageResult" class="result hidden"></div>
+  </section>
+  <section id="simplecalc" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>➕ Simple Calculator</h2>
+    <div class="form-grid">
+      <div><label for="simpleA">First Number</label><input id="simpleA" type="number" step="any" placeholder="e.g. 10"></div>
+      <div><label for="simpleOperator">Operation</label>
+        <select id="simpleOperator"><option value="+">Addition (+)</option><option value="-">Subtraction (−)</option><option value="*">Multiplication (×)</option><option value="/">Division (÷)</option></select>
+      </div>
+      <div><label for="simpleB">Second Number</label><input id="simpleB" type="number" step="any" placeholder="e.g. 5"></div>
+    </div>
+    <button class="action-btn" type="button" onclick="calculateSimple()">Calculate</button>
+    <div id="simpleResult" class="result hidden"></div>
+  </section>
+
+  <section id="agecalc" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>🎂 Age Calculator</h2>
+    <div class="form-grid">
+      <div><label for="birthDate">Date of Birth</label><input id="birthDate" type="date"></div>
+    </div>
+    <button class="action-btn" type="button" onclick="calculateAge()">Calculate Age</button>
+    <div id="ageResult" class="result hidden"></div>
+  </section>
+
+  <section id="emicalc" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>💰 EMI Calculator</h2>
+    <div class="form-grid">
+      <div><label for="loanAmount">Loan Amount (₹)</label><input id="loanAmount" type="number" min="1" step="any" placeholder="e.g. 500000"></div>
+      <div><label for="interestRate">Annual Interest Rate (%)</label><input id="interestRate" type="number" min="0" step="any" placeholder="e.g. 10"></div>
+      <div><label for="loanMonths">Loan Tenure (Months)</label><input id="loanMonths" type="number" min="1" step="1" placeholder="e.g. 60"></div>
+    </div>
+    <button class="action-btn" type="button" onclick="calculateEMI()">Calculate EMI</button>
+    <div id="emiResult" class="result hidden"></div>
+  </section>
+
+  <section id="bmicalc" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>⚖️ BMI Calculator</h2>
+    <div class="form-grid">
+      <div><label for="bmiWeight">Weight (kg)</label><input id="bmiWeight" type="number" min="1" step="any" placeholder="e.g. 70"></div>
+      <div><label for="bmiHeight">Height (cm)</label><input id="bmiHeight" type="number" min="1" step="any" placeholder="e.g. 175"></div>
+    </div>
+    <button class="action-btn" type="button" onclick="calculateBMI()">Calculate BMI</button>
+    <div id="bmiResult" class="result hidden"></div>
+  </section>
+
+  <section id="gstcalc" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>🧾 GST Calculator</h2>
+    <div class="form-grid">
+      <div><label for="gstAmount">Amount (₹)</label><input id="gstAmount" type="number" min="0" step="any" placeholder="e.g. 1000"></div>
+      <div><label for="gstRate">GST Rate</label>
+        <select id="gstRate">
+          <option value="3">3%</option><option value="5">5%</option><option value="12">12%</option>
+          <option value="18" selected>18%</option><option value="28">28%</option>
+        </select>
+      </div>
+      <div><label for="gstMode">Amount Type</label>
+        <select id="gstMode"><option value="exclusive">GST Exclusive</option><option value="inclusive">GST Inclusive</option></select>
+      </div>
+    </div>
+    <button class="action-btn" type="button" onclick="calculateGST()">Calculate GST</button>
+    <div id="gstResult" class="result hidden"></div>
+  </section>
+
+  <section id="unitcalc" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>🔄 Unit Converter</h2>
+    <div class="form-grid">
+      <div>
+        <label for="unitCategory">Category</label>
+        <select id="unitCategory" onchange="updateUnitOptions()">
+          <option value="length">Length</option>
+          <option value="weight">Weight</option>
+          <option value="temperature">Temperature</option>
+        </select>
+      </div>
+      <div>
+        <label for="unitValue">Value</label>
+        <input id="unitValue" type="number" step="any" placeholder="e.g. 10">
+      </div>
+      <div>
+        <label for="unitFrom">From</label>
+        <select id="unitFrom"></select>
+      </div>
+      <div>
+        <label for="unitTo">To</label>
+        <select id="unitTo"></select>
+      </div>
+    </div>
+    <button class="action-btn" type="button" onclick="convertUnit()">Convert</button>
+    <div id="unitResult" class="result hidden"></div>
+  </section>
+
+  <section id="dayscalc" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>📅 Days Between Dates</h2>
+    <div class="form-grid">
+      <div><label for="startDate">Start Date</label><input id="startDate" type="date"></div>
+      <div><label for="endDate">End Date</label><input id="endDate" type="date"></div>
+    </div>
+    <button class="action-btn" type="button" onclick="calculateDays()">Calculate Days</button>
+    <div id="daysResult" class="result hidden"></div>
+  </section>
+
+
+  <section id="currencycalc" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>💱 Currency Converter</h2>
+    <div class="form-grid">
+      <div>
+        <label for="currencyAmount">Amount</label>
+        <input id="currencyAmount" type="number" min="0" step="any" value="1" placeholder="e.g. 100">
+      </div>
+      <div>
+        <label for="currencyFrom">From</label>
+        <select id="currencyFrom">
+          <option value="INR" selected>Indian Rupee (INR)</option>
+          <option value="USD">US Dollar (USD)</option>
+          <option value="EUR">Euro (EUR)</option>
+          <option value="GBP">British Pound (GBP)</option>
+          <option value="JPY">Japanese Yen (JPY)</option>
+          <option value="AED">UAE Dirham (AED)</option>
+          <option value="AUD">Australian Dollar (AUD)</option>
+          <option value="CAD">Canadian Dollar (CAD)</option>
+          <option value="SGD">Singapore Dollar (SGD)</option>
+        </select>
+      </div>
+      <div>
+        <label for="currencyTo">To</label>
+        <select id="currencyTo">
+          <option value="INR">Indian Rupee (INR)</option>
+          <option value="USD" selected>US Dollar (USD)</option>
+          <option value="EUR">Euro (EUR)</option>
+          <option value="GBP">British Pound (GBP)</option>
+          <option value="JPY">Japanese Yen (JPY)</option>
+          <option value="AED">UAE Dirham (AED)</option>
+          <option value="AUD">Australian Dollar (AUD)</option>
+          <option value="CAD">Canadian Dollar (CAD)</option>
+          <option value="SGD">Singapore Dollar (SGD)</option>
+        </select>
+      </div>
+    </div>
+    <button class="action-btn" type="button" onclick="calculateCurrency()">Convert</button>
+    <div id="currencyResult" class="result hidden"></div>
+  </section>
+
+
+  <section id="imagetopdf" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>📄 Image to PDF</h2>
+    <p>Select one or more JPG, JPEG, PNG or WebP images. Each image will become one PDF page.</p>
+    <div class="form-grid">
+      <div>
+        <label for="pdfImages">Select Images</label>
+        <input id="pdfImages" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+      </div>
+      <div>
+        <label for="pdfPageSize">Page Size</label>
+        <select id="pdfPageSize">
+          <option value="a4" selected>A4</option>
+          <option value="letter">Letter</option>
+        </select>
+      </div>
+    </div>
+    <button class="action-btn" type="button" onclick="createImagePDF()">Create PDF</button>
+    <div id="pdfResult" class="result hidden"></div>
+  </section>
+
+
+  <section id="pdftoimage" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>🖼️ PDF to Image</h2>
+    <p>Select a PDF file. Its pages will be converted into PNG images.</p>
+    <div class="form-grid">
+      <div>
+        <label for="pdfFile">Select PDF</label>
+        <input id="pdfFile" type="file" accept="application/pdf,.pdf">
+      </div>
+    </div>
+    <button class="action-btn" type="button" onclick="convertPDFToImages()">Convert PDF</button>
+    <div id="pdfImageResult" class="result hidden"></div>
+    <div id="pdfImageOutput"></div>
+  </section>
+
+
+  <section id="mergepdf" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>📑 Merge PDF</h2>
+    <p>Select two or more PDF files. They will be combined in the order you select them.</p>
+    <div class="form-grid">
+      <div>
+        <label for="mergePdfFiles">Select PDF Files</label>
+        <input id="mergePdfFiles" type="file" accept="application/pdf,.pdf" multiple>
+      </div>
+    </div>
+    <button class="action-btn" type="button" onclick="mergePDFs()">Merge PDFs</button>
+    <div id="mergePdfResult" class="result hidden"></div>
+  </section>
+
+
+  <section id="splitpdf" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>✂️ Split PDF</h2>
+    <p>Select a PDF and enter pages like <strong>1-3,5,8-10</strong>.</p>
+    <div class="form-grid">
+      <div><label for="splitPdfFile">Select PDF</label><input id="splitPdfFile" type="file" accept="application/pdf,.pdf"></div>
+      <div><label for="splitPages">Pages to Extract</label><input id="splitPages" type="text" placeholder="e.g. 1-3,5,8-10"></div>
+    </div>
+    <button class="action-btn" type="button" onclick="splitPDF()">Split PDF</button>
+    <div id="splitPdfResult" class="result hidden"></div>
+  </section>
+
+
+  <section id="passwordgen" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>🔐 Password Generator</h2>
+    <p>Create a strong random password.</p>
+    <div class="form-grid">
+      <div>
+        <label for="passwordLength">Password Length</label>
+        <input id="passwordLength" type="number" min="4" max="128" value="16">
+      </div>
+    </div>
+    <div class="form-grid">
+      <label><input id="pwUpper" type="checkbox" checked> Uppercase (A-Z)</label>
+      <label><input id="pwLower" type="checkbox" checked> Lowercase (a-z)</label>
+      <label><input id="pwNumbers" type="checkbox" checked> Numbers (0-9)</label>
+      <label><input id="pwSymbols" type="checkbox" checked> Symbols (!@#$)</label>
+    </div>
+    <button class="action-btn" type="button" onclick="generatePassword()">Generate Password</button>
+    <div id="passwordResult" class="result hidden"></div>
+  </section>
+
+
+  <section id="qrcodegen" class="panel">
+    <div class="back-row"><button class="close-btn" type="button" onclick="hideTools()">✕ Close</button></div>
+    <h2>🔳 QR Code Generator</h2>
+    <p>Enter any text, website link, phone number or other information to create a QR code.</p>
+    <div class="form-grid">
+      <div>
+        <label for="qrText">Text or Link</label>
+        <textarea id="qrText" rows="4" placeholder="e.g. https://example.com"></textarea>
+      </div>
+    </div>
+    <button class="action-btn" type="button" onclick="generateQRCode()">Generate QR Code</button>
+    <div id="qrResult" class="result hidden"></div>
+    <div id="qrOutput" style="margin-top:16px"></div>
+  </section>
+
+</main>
+
+<footer>© <span id="year"></span> Smart Utility Hub</footer>
+
+<script>
+"use strict";
+
+const toolIds = ["passport", "compressor", "resizer", "percentage", "simplecalc", "agecalc", "emicalc", "bmicalc", "gstcalc", "unitcalc", "dayscalc", "currencycalc", "imagetopdf", "pdftoimage", "mergepdf", "splitpdf", "passwordgen", "qrcodegen"];
+
+function showTool(id) {
+  toolIds.forEach(toolId => document.getElementById(toolId).classList.remove("active"));
+  const selected = document.getElementById(id);
+  if (selected) {
+    selected.classList.add("active");
+    setTimeout(() => selected.scrollIntoView({behavior:"smooth", block:"start"}), 50);
+  }
+}
+
+function hideTools() {
+  toolIds.forEach(toolId => document.getElementById(toolId).classList.remove("active"));
+}
+
+const themeButton = document.getElementById("themeButton");
+function setTheme(theme) {
+  document.body.classList.toggle("dark-mode", theme === "dark");
+  themeButton.textContent = theme === "dark" ? "☀️" : "🌙";
+  localStorage.setItem("theme", theme);
+}
+setTheme(localStorage.getItem("theme") === "dark" ? "dark" : "light");
+themeButton.addEventListener("click", () => {
+  setTheme(document.body.classList.contains("dark-mode") ? "light" : "dark");
+});
+
+document.getElementById("year").textContent = new Date().getFullYear();
+document.getElementById("quality").addEventListener("input", e => {
+  document.getElementById("qualityValue").textContent = e.target.value;
+});
+
+
+const toolSearch = document.getElementById("toolSearch");
+const noResults = document.getElementById("noResults");
+const searchableCards = Array.from(document.querySelectorAll(".tool-card"));
+const searchableGrids = Array.from(document.querySelectorAll(".searchable-grid"));
+const searchableHeadings = Array.from(document.querySelectorAll(".searchable-heading"));
+
+function filterTools() {
+  const query = toolSearch.value.trim().toLowerCase();
+  let visibleCount = 0;
+
+  searchableCards.forEach(card => {
+    const searchableText = (card.dataset.search + " " + card.textContent).toLowerCase();
+    const matches = !query || searchableText.includes(query);
+    card.classList.toggle("hidden", !matches);
+    if (matches) visibleCount++;
+  });
+
+  searchableGrids.forEach(grid => {
+    const hasVisibleCard = Array.from(grid.querySelectorAll(".tool-card"))
+      .some(card => !card.classList.contains("hidden"));
+    grid.classList.toggle("hidden", query && !hasVisibleCard);
+  });
+
+  searchableHeadings.forEach(heading => {
+    const nextGrid = heading.nextElementSibling;
+    heading.classList.toggle("hidden", query && nextGrid && nextGrid.classList.contains("hidden"));
+  });
+
+  noResults.style.display = query && visibleCount === 0 ? "block" : "none";
+}
+
+toolSearch.addEventListener("input", filterTools);
+toolSearch.addEventListener("search", filterTools);
+
+function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) { reject(new Error("Please choose an image first.")); return; }
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Unable to read the image."));
+    reader.onload = event => {
+      const image = new Image();
+      image.onerror = () => reject(new Error("Invalid image file."));
+      image.onload = () => resolve(image);
+      image.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function makePassport() {
+  const status = document.getElementById("passportStatus");
+  const file = document.getElementById("passportFile").files[0];
+  try {
+    status.textContent = "Processing image...";
+    const img = await loadImage(file);
+    const canvas = document.getElementById("passportCanvas");
+    const ctx = canvas.getContext("2d");
+    const targetRatio = canvas.width / canvas.height;
+    const sourceRatio = img.width / img.height;
+    let sx = 0, sy = 0, sw = img.width, sh = img.height;
+    if (sourceRatio > targetRatio) {
+      sw = img.height * targetRatio;
+      sx = (img.width - sw) / 2;
+    } else {
+      sh = img.width / targetRatio;
+      sy = (img.height - sh) / 2;
+    }
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+    document.getElementById("passportDownload").classList.remove("hidden");
+    status.textContent = "Passport photo created successfully.";
+  } catch (error) {
+    status.textContent = error.message;
+  }
+}
+
+async function compressImage() {
+  const status = document.getElementById("compressStatus");
+  const file = document.getElementById("compressFile").files[0];
+  try {
+    status.textContent = "Compressing...";
+    const img = await loadImage(file);
+    const maxDimension = 2200;
+    const scale = Math.min(1, maxDimension / Math.max(img.width, img.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(img.width * scale));
+    canvas.height = Math.max(1, Math.round(img.height * scale));
+    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+    const quality = Number(document.getElementById("quality").value) / 100;
+    const dataUrl = canvas.toDataURL("image/jpeg", quality);
+    const preview = document.getElementById("compressPreview");
+    preview.src = dataUrl;
+    preview.classList.remove("hidden");
+    const download = document.getElementById("compressDownload");
+    download.classList.remove("hidden");
+    download.onclick = () => downloadDataUrl(dataUrl, "compressed-image.jpg");
+    const estimatedBytes = Math.round((dataUrl.length - dataUrl.indexOf(",") - 1) * 0.75);
+    status.textContent = "Done. Approximate output size: " + formatBytes(estimatedBytes);
+  } catch (error) {
+    status.textContent = error.message;
+  }
+}
+
+async function resizeImage() {
+  const status = document.getElementById("resizeStatus");
+  const file = document.getElementById("resizeFile").files[0];
+  const width = Number(document.getElementById("resizeWidth").value);
+  const height = Number(document.getElementById("resizeHeight").value);
+  if (!width || !height || width < 1 || height < 1) {
+    status.textContent = "Please enter valid width and height.";
+    return;
+  }
+  try {
+    status.textContent = "Resizing...";
+    const img = await loadImage(file);
+    const canvas = document.getElementById("resizeCanvas");
+    canvas.width = Math.round(width);
+    canvas.height = Math.round(height);
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    document.getElementById("resizeDownload").classList.remove("hidden");
+    status.textContent = "Image resized to " + canvas.width + " × " + canvas.height + " px.";
+  } catch (error) {
+    status.textContent = error.message;
+  }
+}
+
+function calculatePercentage() {
+  const part = Number(document.getElementById("part").value);
+  const whole = Number(document.getElementById("whole").value);
+  const result = document.getElementById("percentageResult");
+  if (!Number.isFinite(part) || !Number.isFinite(whole) || whole === 0) {
+    result.textContent = "Please enter valid numbers. Total cannot be zero.";
+  } else {
+    const answer = (part / whole) * 100;
+    result.textContent = part + " is " + answer.toFixed(2) + "% of " + whole + ".";
+  }
+  result.classList.remove("hidden");
+}
+
+
+function calculateSimple() {
+  const a = Number(document.getElementById("simpleA").value);
+  const b = Number(document.getElementById("simpleB").value);
+  const op = document.getElementById("simpleOperator").value;
+  const result = document.getElementById("simpleResult");
+  if (!Number.isFinite(a) || !Number.isFinite(b)) {
+    result.textContent = "Please enter both numbers.";
+  } else if (op === "/" && b === 0) {
+    result.textContent = "Cannot divide by zero.";
+  } else {
+    let answer;
+    if (op === "+") answer = a + b;
+    else if (op === "-") answer = a - b;
+    else if (op === "*") answer = a * b;
+    else answer = a / b;
+    result.textContent = "Result: " + Number(answer.toFixed(10));
+  }
+  result.classList.remove("hidden");
+}
+
+function calculateAge() {
+  const value = document.getElementById("birthDate").value;
+  const result = document.getElementById("ageResult");
+  if (!value) {
+    result.textContent = "Please select your date of birth.";
+    result.classList.remove("hidden");
+    return;
+  }
+  const birth = new Date(value + "T00:00:00");
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  if (birth > today) {
+    result.textContent = "Date of birth cannot be in the future.";
+    result.classList.remove("hidden");
+    return;
+  }
+  let years = today.getFullYear() - birth.getFullYear();
+  let months = today.getMonth() - birth.getMonth();
+  let days = today.getDate() - birth.getDate();
+  if (days < 0) {
+    const daysInPreviousMonth = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+    days += daysInPreviousMonth;
+    months--;
+  }
+  if (months < 0) {
+    months += 12;
+    years--;
+  }
+  result.textContent = "Your age is " + years + " years, " + months + " months, and " + days + " days.";
+  result.classList.remove("hidden");
+}
+
+function calculateEMI() {
+  const principal = Number(document.getElementById("loanAmount").value);
+  const annualRate = Number(document.getElementById("interestRate").value);
+  const months = Number(document.getElementById("loanMonths").value);
+  const result = document.getElementById("emiResult");
+  if (!Number.isFinite(principal) || principal <= 0 || !Number.isFinite(annualRate) || annualRate < 0 || !Number.isInteger(months) || months <= 0) {
+    result.textContent = "Please enter valid loan amount, interest rate, and tenure.";
+    result.classList.remove("hidden");
+    return;
+  }
+  const monthlyRate = annualRate / 12 / 100;
+  const emi = monthlyRate === 0
+    ? principal / months
+    : principal * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
+  const total = emi * months;
+  const interest = total - principal;
+  result.innerHTML = "Monthly EMI: ₹" + emi.toLocaleString("en-IN", {maximumFractionDigits:2}) +
+    "<br>Total Payment: ₹" + total.toLocaleString("en-IN", {maximumFractionDigits:2}) +
+    "<br>Total Interest: ₹" + interest.toLocaleString("en-IN", {maximumFractionDigits:2});
+  result.classList.remove("hidden");
+}
+
+
+function calculateBMI() {
+  const weight = Number(document.getElementById("bmiWeight").value);
+  const heightCm = Number(document.getElementById("bmiHeight").value);
+  const result = document.getElementById("bmiResult");
+
+  if (!Number.isFinite(weight) || weight <= 0 || !Number.isFinite(heightCm) || heightCm <= 0) {
+    result.textContent = "Please enter valid weight and height.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  const heightM = heightCm / 100;
+  const bmi = weight / (heightM * heightM);
+  let category;
+  if (bmi < 18.5) category = "Underweight";
+  else if (bmi < 25) category = "Normal range";
+  else if (bmi < 30) category = "Overweight";
+  else category = "Obesity range";
+
+  result.textContent = "Your BMI is " + bmi.toFixed(1) + " — " + category + ".";
+  result.classList.remove("hidden");
+}
+
+function calculateGST() {
+  const amount = Number(document.getElementById("gstAmount").value);
+  const rate = Number(document.getElementById("gstRate").value);
+  const mode = document.getElementById("gstMode").value;
+  const result = document.getElementById("gstResult");
+
+  if (!Number.isFinite(amount) || amount < 0 || !Number.isFinite(rate) || rate < 0) {
+    result.textContent = "Please enter a valid amount and GST rate.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  let base, gst, total;
+  if (mode === "inclusive") {
+    base = amount * 100 / (100 + rate);
+    gst = amount - base;
+    total = amount;
+  } else {
+    base = amount;
+    gst = amount * rate / 100;
+    total = base + gst;
+  }
+
+  result.innerHTML =
+    "Base Amount: ₹" + base.toLocaleString("en-IN", {maximumFractionDigits:2}) +
+    "<br>GST (" + rate + "%): ₹" + gst.toLocaleString("en-IN", {maximumFractionDigits:2}) +
+    "<br>Total Amount: ₹" + total.toLocaleString("en-IN", {maximumFractionDigits:2});
+  result.classList.remove("hidden");
+}
+
+
+const unitDefinitions = {
+  length: [
+    ["km", "Kilometers (km)"],
+    ["m", "Meters (m)"],
+    ["cm", "Centimeters (cm)"],
+    ["mile", "Miles (mi)"],
+    ["ft", "Feet (ft)"],
+    ["in", "Inches (in)"]
+  ],
+  weight: [
+    ["kg", "Kilograms (kg)"],
+    ["g", "Grams (g)"],
+    ["lb", "Pounds (lb)"],
+    ["oz", "Ounces (oz)"]
+  ],
+  temperature: [
+    ["c", "Celsius (°C)"],
+    ["f", "Fahrenheit (°F)"],
+    ["k", "Kelvin (K)"]
+  ]
+};
+
+function updateUnitOptions() {
+  const category = document.getElementById("unitCategory").value;
+  const from = document.getElementById("unitFrom");
+  const to = document.getElementById("unitTo");
+  const units = unitDefinitions[category];
+  from.innerHTML = "";
+  to.innerHTML = "";
+  units.forEach(([value, label]) => {
+    from.add(new Option(label, value));
+    to.add(new Option(label, value));
+  });
+  if (units.length > 1) to.selectedIndex = 1;
+}
+
+function convertUnit() {
+  const category = document.getElementById("unitCategory").value;
+  const value = Number(document.getElementById("unitValue").value);
+  const from = document.getElementById("unitFrom").value;
+  const to = document.getElementById("unitTo").value;
+  const result = document.getElementById("unitResult");
+
+  if (!Number.isFinite(value)) {
+    result.textContent = "Please enter a valid value.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  let converted;
+  if (category === "length") {
+    const factors = {km:1000, m:1, cm:0.01, mile:1609.344, ft:0.3048, in:0.0254};
+    converted = value * factors[from] / factors[to];
+  } else if (category === "weight") {
+    const factors = {kg:1, g:0.001, lb:0.45359237, oz:0.028349523125};
+    converted = value * factors[from] / factors[to];
+  } else {
+    let celsius;
+    if (from === "c") celsius = value;
+    else if (from === "f") celsius = (value - 32) * 5 / 9;
+    else celsius = value - 273.15;
+
+    if (to === "c") converted = celsius;
+    else if (to === "f") converted = celsius * 9 / 5 + 32;
+    else converted = celsius + 273.15;
+  }
+
+  const rounded = Number(converted.toFixed(8));
+  result.textContent = value + " " + from + " = " + rounded + " " + to;
+  result.classList.remove("hidden");
+}
+
+function calculateDays() {
+  const startValue = document.getElementById("startDate").value;
+  const endValue = document.getElementById("endDate").value;
+  const result = document.getElementById("daysResult");
+
+  if (!startValue || !endValue) {
+    result.textContent = "Please select both dates.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  const start = new Date(startValue + "T00:00:00");
+  const end = new Date(endValue + "T00:00:00");
+  const difference = Math.abs(end.getTime() - start.getTime());
+  const days = Math.round(difference / 86400000);
+
+  result.textContent = "Difference between the selected dates: " + days + " day" + (days === 1 ? "" : "s") + ".";
+  result.classList.remove("hidden");
+}
+
+updateUnitOptions();
+
+
+async function calculateCurrency() {
+  const amount = Number(document.getElementById("currencyAmount").value);
+  const from = document.getElementById("currencyFrom").value;
+  const to = document.getElementById("currencyTo").value;
+  const result = document.getElementById("currencyResult");
+
+  if (!Number.isFinite(amount) || amount < 0) {
+    result.textContent = "Please enter a valid amount.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  if (from === to) {
+    result.textContent = amount.toLocaleString("en-IN", {maximumFractionDigits: 2}) + " " + from +
+      " = " + amount.toLocaleString("en-IN", {maximumFractionDigits: 2}) + " " + to;
+    result.classList.remove("hidden");
+    return;
+  }
+
+  result.textContent = "Fetching latest exchange rate...";
+  result.classList.remove("hidden");
+
+  try {
+    const url = "https://api.frankfurter.dev/v1/latest?base=" +
+      encodeURIComponent(from) + "&symbols=" + encodeURIComponent(to);
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Rate request failed");
+
+    const data = await response.json();
+    const rate = data && data.rates ? Number(data.rates[to]) : NaN;
+    if (!Number.isFinite(rate)) throw new Error("Rate unavailable");
+
+    const converted = amount * rate;
+    const displayDate = data.date ? " (Rate date: " + data.date + ")" : "";
+
+    result.innerHTML =
+      amount.toLocaleString("en-IN", {maximumFractionDigits: 2}) + " " + from +
+      " = <strong>" + converted.toLocaleString("en-IN", {maximumFractionDigits: 2}) + " " + to + "</strong>" +
+      "<br>1 " + from + " = " + rate.toLocaleString("en-IN", {maximumFractionDigits: 6}) + " " + to +
+      displayDate;
+  } catch (error) {
+    result.textContent = "Unable to fetch the latest exchange rate. Please check your internet connection and try again.";
+  }
+}
+
+
+function loadImageForPDF(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error("Invalid image"));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error("Unable to read image"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function escapePdfText(text) {
+  return String(text).replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+}
+
+async function createImagePDF() {
+  const files = Array.from(document.getElementById("pdfImages").files || []);
+  const pageSize = document.getElementById("pdfPageSize").value;
+  const result = document.getElementById("pdfResult");
+
+  if (!files.length) {
+    result.textContent = "Please select at least one image.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  result.textContent = "Creating PDF...";
+  result.classList.remove("hidden");
+
+  try {
+    const images = [];
+    for (const file of files) images.push(await loadImageForPDF(file));
+
+    const page = pageSize === "letter" ? {w:612, h:792} : {w:595.28, h:841.89};
+    const margin = 30;
+    let objects = [];
+    let objectCount = 0;
+    const addObject = (content) => { objects.push(content); return ++objectCount; };
+
+    const catalogId = addObject("");
+    const pagesId = addObject("");
+    const pageIds = [];
+
+    for (let i = 0; i < images.length; i++) {
+      const img = images[i];
+      const maxW = page.w - margin * 2;
+      const maxH = page.h - margin * 2;
+      const scale = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+      const drawW = img.naturalWidth * scale;
+      const drawH = img.naturalHeight * scale;
+      const x = (page.w - drawW) / 2;
+      const y = (page.h - drawH) / 2;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(img.naturalWidth));
+      canvas.height = Math.max(1, Math.round(img.naturalHeight));
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+      const base64 = dataUrl.split(",")[1];
+      const binary = atob(base64);
+      let binaryString = "";
+      for (let j = 0; j < binary.length; j++) binaryString += String.fromCharCode(binary.charCodeAt(j));
+
+      const imageId = addObject(
+        "<< /Type /XObject /Subtype /Image /Width " + canvas.width +
+        " /Height " + canvas.height +
+        " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " +
+        binaryString.length + " >>\nstream\n" + binaryString + "\nendstream"
+      );
+
+      const content = "q\n" + drawW.toFixed(2) + " 0 0 " + drawH.toFixed(2) + " " +
+        x.toFixed(2) + " " + y.toFixed(2) + " cm\n/Im" + (i + 1) + " Do\nQ";
+      const contentId = addObject(
+        "<< /Length " + content.length + " >>\nstream\n" + content + "\nendstream"
+      );
+
+      const pageId = addObject(
+        "<< /Type /Page /Parent " + pagesId + " 0 R /MediaBox [0 0 " + page.w + " " + page.h +
+        "] /Resources << /XObject << /Im" + (i + 1) + " " + imageId + " 0 R >> >> /Contents " +
+        contentId + " 0 R >>"
+      );
+      pageIds.push(pageId);
+    }
+
+    objects[catalogId - 1] = "<< /Type /Catalog /Pages " + pagesId + " 0 R >>";
+    objects[pagesId - 1] = "<< /Type /Pages /Kids [" + pageIds.map(id => id + " 0 R").join(" ") +
+      "] /Count " + pageIds.length + " >>";
+
+    let pdf = "%PDF-1.4\n";
+    const offsets = [0];
+    for (let i = 0; i < objects.length; i++) {
+      offsets.push(pdf.length);
+      pdf += (i + 1) + " 0 obj\n" + objects[i] + "\nendobj\n";
+    }
+    const xrefOffset = pdf.length;
+    pdf += "xref\n0 " + (objects.length + 1) + "\n0000000000 65535 f \n";
+    for (let i = 1; i < offsets.length; i++) {
+      pdf += String(offsets[i]).padStart(10, "0") + " 00000 n \n";
+    }
+    pdf += "trailer\n<< /Size " + (objects.length + 1) + " /Root " + catalogId +
+      " 0 R >>\nstartxref\n" + xrefOffset + "\n%%EOF";
+
+    const bytes = new Uint8Array(pdf.length);
+    for (let i = 0; i < pdf.length; i++) bytes[i] = pdf.charCodeAt(i) & 0xff;
+    const blob = new Blob([bytes], {type:"application/pdf"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "images-to-pdf.pdf";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    result.textContent = "PDF created successfully with " + images.length + " page" + (images.length === 1 ? "" : "s") + ".";
+  } catch (error) {
+    result.textContent = "Unable to create PDF. Please try different image files.";
+  }
+}
+
+
+async function convertPDFToImages() {
+  const input = document.getElementById("pdfFile");
+  const file = input.files && input.files[0];
+  const result = document.getElementById("pdfImageResult");
+  const output = document.getElementById("pdfImageOutput");
+
+  output.innerHTML = "";
+
+  if (!file) {
+    result.textContent = "Please select a PDF file.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  if (typeof pdfjsLib === "undefined") {
+    result.textContent = "PDF converter library could not load. Please check your internet connection and try again.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  result.textContent = "Reading PDF...";
+  result.classList.remove("hidden");
+
+  try {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+    const data = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data }).promise;
+
+    result.textContent = "Converting " + pdf.numPages + " page" + (pdf.numPages === 1 ? "" : "s") + "...";
+
+    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+      const page = await pdf.getPage(pageNumber);
+      const viewport = page.getViewport({ scale: 2 });
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      canvas.width = Math.ceil(viewport.width);
+      canvas.height = Math.ceil(viewport.height);
+
+      await page.render({ canvasContext: context, viewport }).promise;
+
+      const wrap = document.createElement("div");
+      wrap.style.marginTop = "18px";
+
+      const title = document.createElement("strong");
+      title.textContent = "Page " + pageNumber;
+      wrap.appendChild(title);
+
+      const preview = document.createElement("img");
+      preview.src = canvas.toDataURL("image/png");
+      preview.alt = "PDF page " + pageNumber;
+      preview.style.display = "block";
+      preview.style.width = "100%";
+      preview.style.maxWidth = "500px";
+      preview.style.marginTop = "8px";
+      preview.style.borderRadius = "10px";
+      wrap.appendChild(preview);
+
+      const link = document.createElement("a");
+      link.href = preview.src;
+      link.download = file.name.replace(/\.pdf$/i, "") + "-page-" + pageNumber + ".png";
+      link.textContent = "⬇ Download Page " + pageNumber + " PNG";
+      link.className = "action-btn";
+      link.style.display = "inline-block";
+      link.style.marginTop = "10px";
+      wrap.appendChild(link);
+
+      output.appendChild(wrap);
+    }
+
+    result.textContent = "Conversion completed successfully.";
+  } catch (error) {
+    console.error(error);
+    result.textContent = "Unable to convert this PDF. Please try another valid PDF file.";
+  }
+}
+
+
+async function mergePDFs() {
+  const files = Array.from(document.getElementById("mergePdfFiles").files || []);
+  const result = document.getElementById("mergePdfResult");
+
+  if (files.length < 2) {
+    result.textContent = "Please select at least two PDF files.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  if (typeof PDFLib === "undefined") {
+    result.textContent = "PDF merge library could not load. Please check your internet connection and try again.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  result.textContent = "Merging " + files.length + " PDF files...";
+  result.classList.remove("hidden");
+
+  try {
+    const mergedPdf = await PDFLib.PDFDocument.create();
+    let totalPages = 0;
+
+    for (let i = 0; i < files.length; i++) {
+      result.textContent = "Adding file " + (i + 1) + " of " + files.length + "...";
+      const bytes = await files[i].arrayBuffer();
+      const sourcePdf = await PDFLib.PDFDocument.load(bytes);
+      const pages = await mergedPdf.copyPages(sourcePdf, sourcePdf.getPageIndices());
+      pages.forEach(page => mergedPdf.addPage(page));
+      totalPages += pages.length;
+    }
+
+    const mergedBytes = await mergedPdf.save();
+    const blob = new Blob([mergedBytes], {type: "application/pdf"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "merged-pdf.pdf";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    result.textContent = "Successfully merged " + files.length + " PDF files (" + totalPages + " pages).";
+  } catch (error) {
+    console.error(error);
+    result.textContent = "Unable to merge these PDF files. Please make sure they are valid and not password protected.";
+  }
+}
+
+
+function parsePageRanges(text, totalPages) {
+  const selected = [], seen = new Set();
+  const parts = text.split(",").map(x => x.trim()).filter(Boolean);
+  if (!parts.length) throw new Error("Enter at least one page number.");
+  for (const part of parts) {
+    let start, end;
+    if (/^\d+$/.test(part)) start = end = Number(part);
+    else if (/^\d+\s*-\s*\d+$/.test(part)) [start, end] = part.split("-").map(x => Number(x.trim()));
+    else throw new Error("Invalid format. Use 1, 1-3 or 1-3,5.");
+    if (start < 1 || end < start || end > totalPages) throw new Error("Page numbers must be between 1 and " + totalPages + ".");
+    for (let page=start; page<=end; page++) if (!seen.has(page)) { seen.add(page); selected.push(page); }
+  }
+  return selected;
+}
+async function splitPDF() {
+  const file = document.getElementById("splitPdfFile").files[0];
+  const text = document.getElementById("splitPages").value.trim();
+  const result = document.getElementById("splitPdfResult");
+  result.classList.remove("hidden");
+  if (!file) return result.textContent = "Please select a PDF file.";
+  if (!text) return result.textContent = "Please enter pages to extract.";
+  if (typeof PDFLib === "undefined") return result.textContent = "PDF library could not load. Please check your internet connection.";
+  try {
+    result.textContent = "Creating split PDF...";
+    const source = await PDFLib.PDFDocument.load(await file.arrayBuffer());
+    const nums = parsePageRanges(text, source.getPageCount());
+    const out = await PDFLib.PDFDocument.create();
+    const pages = await out.copyPages(source, nums.map(n => n - 1));
+    pages.forEach(page => out.addPage(page));
+    const bytes = await out.save();
+    const url = URL.createObjectURL(new Blob([bytes], {type:"application/pdf"}));
+    const a=document.createElement("a"); a.href=url; a.download="split-pdf-pages.pdf"; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    result.textContent = "Successfully created PDF with " + nums.length + " page" + (nums.length===1?"":"s") + ".";
+  } catch(e) { console.error(e); result.textContent = e.message || "Unable to split this PDF."; }
+}
+
+
+function generatePassword() {
+  const length = Math.floor(Number(document.getElementById("passwordLength").value));
+  const upper = document.getElementById("pwUpper").checked;
+  const lower = document.getElementById("pwLower").checked;
+  const numbers = document.getElementById("pwNumbers").checked;
+  const symbols = document.getElementById("pwSymbols").checked;
+  const result = document.getElementById("passwordResult");
+
+  if (!Number.isFinite(length) || length < 4 || length > 128) {
+    result.textContent = "Please enter a length between 4 and 128.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  const sets = [];
+  if (upper) sets.push("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  if (lower) sets.push("abcdefghijklmnopqrstuvwxyz");
+  if (numbers) sets.push("0123456789");
+  if (symbols) sets.push("!@#$%^&*_-+=?");
+
+  if (!sets.length) {
+    result.textContent = "Please select at least one character type.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  // Ensure selected character groups are represented first
+  const passwordChars = [];
+  const seed = new Uint32Array(sets.length + length);
+  crypto.getRandomValues(seed);
+  sets.forEach((set, i) => passwordChars.push(set[seed[i] % set.length]));
+
+  const all = sets.join("");
+  for (let i = passwordChars.length; i < length; i++) {
+    passwordChars.push(all[seed[i] % all.length]);
+  }
+
+  // Fisher-Yates shuffle
+  for (let i = passwordChars.length - 1; i > 0; i--) {
+    const j = seed[(i + sets.length) % seed.length] % (i + 1);
+    [passwordChars[i], passwordChars[j]] = [passwordChars[j], passwordChars[i]];
+  }
+
+  const password = passwordChars.join("");
+  result.innerHTML =
+    '<strong>Your Password:</strong><br><span id="generatedPassword" style="word-break:break-all">' +
+    password.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") +
+    '</span><br><button type="button" class="action-btn" style="margin-top:10px" onclick="copyGeneratedPassword()">📋 Copy Password</button>';
+  result.classList.remove("hidden");
+}
+
+async function copyGeneratedPassword() {
+  const text = document.getElementById("generatedPassword");
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text.textContent);
+    const result = document.getElementById("passwordResult");
+    const note = document.createElement("div");
+    note.textContent = "Copied successfully!";
+    note.style.marginTop = "8px";
+    result.appendChild(note);
+  } catch (error) {
+    const range = document.createRange();
+    range.selectNodeContents(text);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.execCommand("copy");
+    selection.removeAllRanges();
+  }
+}
+
+
+function generateQRCode() {
+  const text = document.getElementById("qrText").value.trim();
+  const result = document.getElementById("qrResult");
+  const output = document.getElementById("qrOutput");
+
+  output.innerHTML = "";
+  if (!text) {
+    result.textContent = "Please enter text or a link.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  if (typeof QRCode === "undefined") {
+    result.textContent = "QR code library could not load. Please check your internet connection and try again.";
+    result.classList.remove("hidden");
+    return;
+  }
+
+  result.textContent = "QR Code created successfully.";
+  result.classList.remove("hidden");
+
+  const box = document.createElement("div");
+  box.style.display = "inline-block";
+  box.style.padding = "12px";
+  box.style.background = "#ffffff";
+  box.style.borderRadius = "12px";
+
+  output.appendChild(box);
+  new QRCode(box, {
+    text: text,
+    width: 220,
+    height: 220,
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  const download = document.createElement("button");
+  download.type = "button";
+  download.className = "action-btn";
+  download.style.marginTop = "12px";
+  download.textContent = "⬇ Download QR Code";
+  download.onclick = function() {
+    const img = box.querySelector("img");
+    const canvas = box.querySelector("canvas");
+    let url = "";
+    if (img && img.src) url = img.src;
+    else if (canvas) url = canvas.toDataURL("image/png");
+    if (!url) return;
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "qr-code.png";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+  output.appendChild(document.createElement("br"));
+  output.appendChild(download);
+}
+
+function downloadCanvas(canvasId, filename) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || !canvas.width || !canvas.height) return;
+  const isPassport = canvasId === "passportCanvas";
+  const mime = isPassport ? document.getElementById("passportFormat").value : "image/png";
+  const extension = mime === "image/jpeg" ? ".jpg" : ".png";
+  const link = document.createElement("a");
+  link.download = filename + extension;
+  link.href = canvas.toDataURL(mime, 0.92);
+  link.click();
+}
+
+function downloadDataUrl(dataUrl, filename) {
+  const link = document.createElement("a");
+  link.download = filename;
+  link.href = dataUrl;
+  link.click();
+}
+
+function formatBytes(bytes) {
+  if (!bytes) return "0 Bytes";
+  const units = ["Bytes","KB","MB"];
+  const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  return (bytes / Math.pow(1024, index)).toFixed(index ? 2 : 0) + " " + units[index];
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</body>
+</html>
