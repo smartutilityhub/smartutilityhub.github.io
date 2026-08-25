@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PDF Merge Online - Smart Utility Hub</title>
+<meta name="description" content="Merge multiple PDF files online for free with Smart Utility Hub.">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f5f7fb;
+  color:#172033;
+}
+
+header{
+  background:#ffffff;
+  border-bottom:1px solid #dce1eb;
+  padding:18px;
+  text-align:center;
+}
+
+header h1{
+  color:#2563eb;
+  font-size:26px;
+}
+
+header p{
+  color:#687087;
+  margin-top:6px;
+}
+
+.container{
+  max-width:850px;
+  margin:40px auto;
+  padding:20px;
+}
+
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:35px 25px;
+  box-shadow:0 10px 30px rgba(20,30,55,.08);
+  text-align:center;
+}
+
+.card h2{
+  margin-bottom:10px;
+}
+
+.card p{
+  color:#687087;
+  margin-bottom:25px;
+}
+
+.upload-box{
+  border:2px dashed #2563eb;
+  border-radius:14px;
+  padding:40px 20px;
+  cursor:pointer;
+  background:#f8fbff;
+  transition:.2s;
+}
+
+.upload-box:hover{
+  background:#eef5ff;
+}
+
+.upload-icon{
+  font-size:50px;
+  margin-bottom:10px;
+}
+
+input[type="file"]{
+  display:none;
+}
+
+.file-list{
+  margin-top:25px;
+  text-align:left;
+}
+
+.file-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#f5f7fb;
+  padding:12px 15px;
+  border-radius:8px;
+  margin-bottom:10px;
+  gap:10px;
+}
+
+.file-name{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.remove-btn{
+  border:none;
+  background:#ef4444;
+  color:white;
+  padding:7px 10px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.merge-btn{
+  margin-top:25px;
+  border:none;
+  background:#2563eb;
+  color:white;
+  font-size:17px;
+  padding:14px 30px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.merge-btn:hover{
+  background:#1d4ed8;
+}
+
+.merge-btn:disabled{
+  background:#9ca3af;
+  cursor:not-allowed;
+}
+
+.status{
+  margin-top:20px;
+  font-weight:bold;
+  color:#2563eb;
+}
+
+.info{
+  margin-top:30px;
+  background:#fff;
+  padding:25px;
+  border-radius:14px;
+  line-height:1.7;
+  box-shadow:0 5px 20px rgba(20,30,55,.05);
+}
+
+.info h3{
+  margin-bottom:10px;
+}
+
+footer{
+  text-align:center;
+  padding:25px;
+  color:#687087;
+}
+
+@media(max-width:600px){
+  .container{
+    margin:20px auto;
+  }
+
+  .card{
+    padding:25px 15px;
+  }
+
+  header h1{
+    font-size:22px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>📄 PDF Merge Tool</h1>
+  <p>Merge multiple PDF files into one PDF for free</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+
+    <h2>Merge Your PDF Files</h2>
+    <p>Select two or more PDF files and combine them into one.</p>
+
+    <label class="upload-box">
+      <div class="upload-icon">📁</div>
+      <strong>Click here to select PDF files</strong>
+      <p style="margin-top:8px;margin-bottom:0;">You can select multiple PDFs</p>
+
+      <input type="file" id="pdfInput" accept="application/pdf" multiple>
+    </label>
+
+    <div class="file-list" id="fileList"></div>
+
+    <button class="merge-btn" id="mergeBtn" disabled>
+      Merge PDFs
+    </button>
+
+    <div class="status" id="status"></div>
+
+  </div>
+
+  <div class="info">
+    <h3>How to Merge PDF Files?</h3>
+    <p>
+      1. Select two or more PDF files.<br>
+      2. Check the selected files.<br>
+      3. Click the <strong>Merge PDFs</strong> button.<br>
+      4. Your merged PDF will download automatically.
+    </p>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 Smart Utility Hub - Free Online Tools
+</footer>
+
+<script>
+
+let selectedFiles = [];
+
+const pdfInput = document.getElementById("pdfInput");
+const fileList = document.getElementById("fileList");
+const mergeBtn = document.getElementById("mergeBtn");
+const status = document.getElementById("status");
+
+pdfInput.addEventListener("change", function(){
+
+  const newFiles = Array.from(pdfInput.files);
+
+  newFiles.forEach(file => {
+
+    if(file.type === "application/pdf"){
+      selectedFiles.push(file);
+    }
+
+  });
+
+  renderFiles();
+
+  pdfInput.value = "";
+
+});
+
+function renderFiles(){
+
+  fileList.innerHTML = "";
+
+  selectedFiles.forEach((file,index) => {
+
+    const item = document.createElement("div");
+
+    item.className = "file-item";
+
+    item.innerHTML = `
+      <span class="file-name">📄 ${file.name}</span>
+      <button class="remove-btn" onclick="removeFile(${index})">
+        Remove
+      </button>
+    `;
+
+    fileList.appendChild(item);
+
+  });
+
+  mergeBtn.disabled = selectedFiles.length < 2;
+
+}
+
+function removeFile(index){
+
+  selectedFiles.splice(index,1);
+
+  renderFiles();
+
+}
+
+mergeBtn.addEventListener("click", async function(){
+
+  if(selectedFiles.length < 2){
+    alert("Please select at least 2 PDF files.");
+    return;
+  }
+
+  try{
+
+    mergeBtn.disabled = true;
+
+    status.innerText = "⏳ Merging your PDF files...";
+
+    const mergedPdf = await PDFLib.PDFDocument.create();
+
+    for(const file of selectedFiles){
+
+      const arrayBuffer = await file.arrayBuffer();
+
+      const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+
+      const copiedPages = await mergedPdf.copyPages(
+        pdf,
+        pdf.getPageIndices()
+      );
+
+      copiedPages.forEach(page => {
+        mergedPdf.addPage(page);
+      });
+
+    }
+
+    const mergedPdfFile = await mergedPdf.save();
+
+    const blob = new Blob(
+      [mergedPdfFile],
+      {type:"application/pdf"}
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+
+    link.download = "merged-smart-utility-hub.pdf";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+
+    status.innerText = "✅ PDF files merged successfully!";
+
+  }
+  catch(error){
+
+    console.error(error);
+
+    status.innerText = "❌ Something went wrong. Please try again.";
+
+  }
+
+  mergeBtn.disabled = selectedFiles.length < 2;
+
+});
+
+</script>
+
+</body>
+</html>
