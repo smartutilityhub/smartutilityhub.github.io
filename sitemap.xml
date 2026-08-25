@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
   <url>
     <loc>https://smartutilityhub.github.io/</loc>
   </url>
+
+  <url>
+    <loc>https://smartutilityhub.github.io/passport-photo.html</loc>
+  </url>
+
+  <url>
+    <loc>https://smartutilityhub.github.io/image-compressor.html</loc>
+  </url>
+
+  <url>
+    <loc>https://smartutilityhub.github.io/image-resizer.html</loc>
+  </url>
+
+  <url>
+    <loc>https://smartutilityhub.github.io/percentage-calculator.html</loc>
+  </url>
+
+  <url>
+    <loc>https://smartutilityhub.github.io/qr-code-generator.html</loc>
+  </url>
+
 </urlset>
