@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Percentage Calculator Online - Free Percentage Calculator | Smart Utility Hub</title>
+<meta name="description" content="Use our free online percentage calculator to calculate percentage of a number, percentage increase, decrease and percentage difference instantly.">
+<meta name="keywords" content="percentage calculator, calculate percentage, percentage increase calculator, percentage decrease calculator, percentage of number">
+<meta name="robots" content="index, follow">
+
+<style>
+:root{
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#687087;
+  --primary:#2563eb;
+  --primary2:#7c3aed;
+  --border:#dce1eb;
+  --success:#059669;
+  --shadow:0 10px 30px rgba(20,30,55,.08);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+header{
+  background:linear-gradient(135deg,#1d4ed8,#7c3aed);
+  color:white;
+  padding:18px 20px;
+}
+
+.nav{
+  max-width:1100px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-size:22px;
+  font-weight:700;
+}
+
+.home-btn{
+  color:white;
+  text-decoration:none;
+  border:1px solid rgba(255,255,255,.6);
+  padding:9px 16px;
+  border-radius:10px;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:55px 20px;
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.hero h1{
+  font-size:42px;
+  margin-bottom:12px;
+}
+
+.hero p{
+  color:var(--muted);
+  font-size:18px;
+  line-height:1.6;
+}
+
+.calculator{
+  background:white;
+  border-radius:20px;
+  padding:30px;
+  box-shadow:var(--shadow);
+  margin-bottom:25px;
+}
+
+.calculator h2{
+  margin-top:0;
+}
+
+.row{
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+  align-items:end;
+}
+
+.field{
+  flex:1;
+  min-width:180px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:8px;
+  font-weight:700;
+}
+
+.field input{
+  width:100%;
+  padding:13px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  font-size:16px;
+}
+
+button{
+  border:none;
+  padding:13px 22px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#2563eb,#7c3aed);
+  color:white;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.result{
+  display:none;
+  margin-top:20px;
+  padding:18px;
+  border-radius:12px;
+  background:#f0fdf4;
+  border:1px solid #bbf7d0;
+  color:#166534;
+  font-size:18px;
+  font-weight:700;
+}
+
+.info{
+  background:white;
+  border-radius:20px;
+  padding:30px;
+  box-shadow:var(--shadow);
+  line-height:1.7;
+}
+
+footer{
+  text-align:center;
+  padding:25px;
+  color:var(--muted);
+}
+
+@media(max-width:600px){
+  .hero h1{
+    font-size:32px;
+  }
+
+  .row{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .field{
+    width:100%;
+  }
+
+  button{
+    width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">Smart Utility Hub</div>
+    <a class="home-btn" href="./index.html">← Home</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <section class="hero">
+    <h1>Free Percentage Calculator</h1>
+    <p>Calculate percentages, percentage increase and decrease quickly and easily.</p>
+  </section>
+
+  <section class="calculator">
+    <h2>What is X% of Y?</h2>
+
+    <div class="row">
+      <div class="field">
+        <label>Percentage (%)</label>
+        <input type="number" id="percent1" placeholder="Example: 20">
+      </div>
+
+      <div class="field">
+        <label>Number</label>
+        <input type="number" id="number1" placeholder="Example: 500">
+      </div>
+
+      <button onclick="calculatePercent()">Calculate</button>
+    </div>
+
+    <div class="result" id="result1"></div>
+  </section>
+
+  <section class="calculator">
+    <h2>X is what percentage of Y?</h2>
+
+    <div class="row">
+      <div class="field">
+        <label>First Number (X)</label>
+        <input type="number" id="number2" placeholder="Example: 50">
+      </div>
+
+      <div class="field">
+        <label>Second Number (Y)</label>
+        <input type="number" id="number3" placeholder="Example: 200">
+      </div>
+
+      <button onclick="calculateWhatPercent()">Calculate</button>
+    </div>
+
+    <div class="result" id="result2"></div>
+  </section>
+
+  <section class="calculator">
+    <h2>Percentage Increase / Decrease</h2>
+
+    <div class="row">
+      <div class="field">
+        <label>Original Number</label>
+        <input type="number" id="oldNumber" placeholder="Example: 100">
+      </div>
+
+      <div class="field">
+        <label>New Number</label>
+        <input type="number" id="newNumber" placeholder="Example: 150">
+      </div>
+
+      <button onclick="calculateChange()">Calculate</button>
+    </div>
+
+    <div class="result" id="result3"></div>
+  </section>
+
+  <section class="info">
+    <h2>How to Use the Percentage Calculator?</h2>
+
+    <ol>
+      <li>Enter the numbers in the required fields.</li>
+      <li>Click the <strong>Calculate</strong> button.</li>
+      <li>Your percentage result will appear instantly.</li>
+    </ol>
+
+    <h2>Percentage Examples</h2>
+
+    <p><strong>20% of 500</strong> = 100</p>
+    <p><strong>50 is what percentage of 200?</strong> = 25%</p>
+    <p>If a value changes from <strong>100 to 150</strong>, the increase is <strong>50%</strong>.</p>
+  </section>
+
+</div>
+
+<footer>
+  © 2026 Smart Utility Hub - Free Online Tools
+</footer>
+
+<script>
+function showResult(id, message){
+  const result = document.getElementById(id);
+  result.style.display = "block";
+  result.textContent = message;
+}
+
+function calculatePercent(){
+  const percent = parseFloat(document.getElementById("percent1").value);
+  const number = parseFloat(document.getElementById("number1").value);
+
+  if(isNaN(percent) || isNaN(number)){
+    alert("Please enter valid numbers.");
+    return;
+  }
+
+  const answer = (percent / 100) * number;
+
+  showResult(
+    "result1",
+    percent + "% of " + number + " = " + answer
+  );
+}
+
+function calculateWhatPercent(){
+  const x = parseFloat(document.getElementById("number2").value);
+  const y = parseFloat(document.getElementById("number3").value);
+
+  if(isNaN(x) || isNaN(y) || y === 0){
+    alert("Please enter valid numbers.");
+    return;
+  }
+
+  const answer = (x / y) * 100;
+
+  showResult(
+    "result2",
+    x + " is " + answer.toFixed(2) + "% of " + y
+  );
+}
+
+function calculateChange(){
+  const oldNumber = parseFloat(document.getElementById("oldNumber").value);
+  const newNumber = parseFloat(document.getElementById("newNumber").value);
+
+  if(isNaN(oldNumber) || isNaN(newNumber) || oldNumber === 0){
+    alert("Please enter valid numbers.");
+    return;
+  }
+
+  const change = ((newNumber - oldNumber) / oldNumber) * 100;
+
+  let type = change >= 0 ? "increase" : "decrease";
+
+  showResult(
+    "result3",
+    "Percentage " + type + ": " + Math.abs(change).toFixed(2) + "%"
+  );
+}
+</script>
+
+</body>
+</html>
