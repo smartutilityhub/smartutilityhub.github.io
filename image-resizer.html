@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Image Resizer Online - Smart Utility Hub</title>
+<meta name="description" content="Resize JPG, JPEG and PNG images online for free. Change image width and height and download instantly.">
+
+<style>
+:root{
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#687087;
+  --primary:#2563eb;
+  --primary2:#7c3aed;
+  --border:#dce1eb;
+  --success:#059669;
+  --shadow:0 10px 30px rgba(20,30,55,.08);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+header{
+  background:linear-gradient(135deg,#1d4ed8,#7c3aed);
+  color:#fff;
+  padding:18px 20px;
+}
+.nav{
+  max-width:1150px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.logo{
+  font-size:22px;
+  font-weight:700;
+}
+.home-btn{
+  color:#fff;
+  text-decoration:none;
+  border:1px solid rgba(255,255,255,.5);
+  padding:9px 16px;
+  border-radius:10px;
+}
+.hero{
+  max-width:950px;
+  margin:auto;
+  padding:70px 20px 40px;
+  text-align:center;
+}
+.hero h1{
+  font-size:42px;
+  margin:0 0 15px;
+}
+.hero p{
+  color:var(--muted);
+  font-size:18px;
+  line-height:1.6;
+}
+.card{
+  max-width:850px;
+  margin:0 auto 40px;
+  background:var(--card);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  padding:30px;
+}
+.upload-box{
+  border:2px dashed #2563eb;
+  border-radius:15px;
+  padding:45px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:.2s;
+}
+.upload-box:hover{
+  background:#f8fbff;
+}
+.upload-icon{
+  font-size:42px;
+}
+.upload-box h2{
+  margin:10px 0;
+}
+input[type=file]{
+  display:none;
+}
+.editor{
+  display:none;
+  margin-top:25px;
+}
+.preview-wrap{
+  text-align:center;
+  margin:20px 0;
+}
+.preview-wrap img{
+  max-width:100%;
+  max-height:420px;
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+.controls{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-top:20px;
+}
+.field label{
+  display:block;
+  font-weight:700;
+  margin-bottom:7px;
+}
+.field input{
+  width:100%;
+  padding:13px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  font-size:16px;
+}
+.check-row{
+  margin:18px 0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+button{
+  border:none;
+  border-radius:10px;
+  padding:13px 20px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
+.resize-btn{
+  background:var(--primary);
+  color:#fff;
+}
+.download-btn{
+  background:var(--success);
+  color:#fff;
+}
+.reset-btn{
+  background:#e5e7eb;
+  color:#172033;
+}
+.info{
+  margin-top:20px;
+  padding:14px;
+  background:#f8fafc;
+  border-radius:10px;
+  color:var(--muted);
+}
+.guide{
+  max-width:850px;
+  margin:0 auto 50px;
+  background:#fff;
+  padding:28px;
+  border-radius:18px;
+  box-shadow:var(--shadow);
+}
+.guide h2{margin-top:0}
+.guide li{
+  margin:12px 0;
+  line-height:1.5;
+}
+footer{
+  text-align:center;
+  padding:25px;
+  background:#111827;
+  color:#fff;
+}
+
+@media(max-width:600px){
+  .hero h1{font-size:32px}
+  .controls{grid-template-columns:1fr}
+  .buttons{flex-direction:column}
+  button{width:100%}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">Smart Utility Hub</div>
+    <a class="home-btn" href="./index.html">← Home</a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Free Image Resizer Online</h1>
+  <p>Resize your JPG, JPEG or PNG image by changing width and height. Fast, simple and completely free.</p>
+</section>
+
+<main class="card">
+
+  <label class="upload-box" for="imageInput">
+    <div class="upload-icon">🖼️</div>
+    <h2>Upload Your Image</h2>
+    <p>Click here to select an image</p>
+  </label>
+
+  <input type="file" id="imageInput" accept="image/*">
+
+  <div class="editor" id="editor">
+
+    <div class="preview-wrap">
+      <img id="preview" alt="Image preview">
+    </div>
+
+    <div class="controls">
+
+      <div class="field">
+        <label for="width">Width (px)</label>
+        <input type="number" id="width" min="1">
+      </div>
+
+      <div class="field">
+        <label for="height">Height (px)</label>
+        <input type="number" id="height" min="1">
+      </div>
+
+    </div>
+
+    <div class="check-row">
+      <input type="checkbox" id="lockRatio" checked>
+      <label for="lockRatio">Maintain aspect ratio</label>
+    </div>
+
+    <div class="buttons">
+      <button class="resize-btn" id="resizeBtn">Resize Image</button>
+      <button class="download-btn" id="downloadBtn">Download Image</button>
+      <button class="reset-btn" id="resetBtn">Reset</button>
+    </div>
+
+    <div class="info" id="info"></div>
+
+  </div>
+
+</main>
+
+<section class="guide">
+  <h2>How to Resize an Image?</h2>
+  <ol>
+    <li>Click <b>Upload Your Image</b>.</li>
+    <li>Select a JPG, JPEG or PNG image.</li>
+    <li>Enter your required width or height in pixels.</li>
+    <li>Click <b>Resize Image</b>.</li>
+    <li>Click <b>Download Image</b> to save it.</li>
+  </ol>
+</section>
+
+<footer>
+  © 2026 Smart Utility Hub - Free Online Tools
+</footer>
+
+<script>
+const imageInput = document.getElementById("imageInput");
+const preview = document.getElementById("preview");
+const editor = document.getElementById("editor");
+const widthInput = document.getElementById("width");
+const heightInput = document.getElementById("height");
+const lockRatio = document.getElementById("lockRatio");
+const resizeBtn = document.getElementById("resizeBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+const resetBtn = document.getElementById("resetBtn");
+const info = document.getElementById("info");
+
+let originalImage = null;
+let originalWidth = 0;
+let originalHeight = 0;
+let ratio = 1;
+let resizedCanvas = null;
+let isUpdating = false;
+
+imageInput.addEventListener("change", function(e){
+  const file = e.target.files[0];
+
+  if(!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(event){
+    preview.src = event.target.result;
+
+    preview.onload = function(){
+      originalImage = preview;
+      originalWidth = preview.naturalWidth;
+      originalHeight = preview.naturalHeight;
+      ratio = originalWidth / originalHeight;
+
+      widthInput.value = originalWidth;
+      heightInput.value = originalHeight;
+
+      editor.style.display = "block";
+      info.textContent = "Original size: " + originalWidth + " × " + originalHeight + " pixels";
+    };
+  };
+
+  reader.readAsDataURL(file);
+});
+
+widthInput.addEventListener("input", function(){
+  if(lockRatio.checked && !isUpdating){
+    isUpdating = true;
+    heightInput.value = Math.round(widthInput.value / ratio);
+    isUpdating = false;
+  }
+});
+
+heightInput.addEventListener("input", function(){
+  if(lockRatio.checked && !isUpdating){
+    isUpdating = true;
+    widthInput.value = Math.round(heightInput.value * ratio);
+    isUpdating = false;
+  }
+});
+
+resizeBtn.addEventListener("click", function(){
+
+  if(!originalImage){
+    alert("Please upload an image first.");
+    return;
+  }
+
+  const newWidth = parseInt(widthInput.value);
+  const newHeight = parseInt(heightInput.value);
+
+  if(!newWidth || !newHeight || newWidth < 1 || newHeight < 1){
+    alert("Please enter valid width and height.");
+    return;
+  }
+
+  resizedCanvas = document.createElement("canvas");
+  resizedCanvas.width = newWidth;
+  resizedCanvas.height = newHeight;
+
+  const ctx = resizedCanvas.getContext("2d");
+
+  ctx.drawImage(
+    originalImage,
+    0,
+    0,
+    originalWidth,
+    originalHeight,
+    0,
+    0,
+    newWidth,
+    newHeight
+  );
+
+  preview.src = resizedCanvas.toDataURL("image/png");
+
+  info.textContent =
+    "Image resized successfully: " +
+    newWidth + " × " + newHeight + " pixels";
+});
+
+downloadBtn.addEventListener("click", function(){
+
+  if(!resizedCanvas){
+    alert("Please resize the image first.");
+    return;
+  }
+
+  const link = document.createElement("a");
+
+  link.download = "resized-image.png";
+  link.href = resizedCanvas.toDataURL("image/png");
+
+  link.click();
+});
+
+resetBtn.addEventListener("click", function(){
+
+  if(!originalImage) return;
+
+  widthInput.value = originalWidth;
+  heightInput.value = originalHeight;
+
+  preview.src = imageInput.files[0]
+    ? URL.createObjectURL(imageInput.files[0])
+    : "";
+
+  resizedCanvas = null;
+
+  info.textContent =
+    "Reset to original size: " +
+    originalWidth + " × " + originalHeight + " pixels";
+});
+</script>
+
+</body>
+</html>
